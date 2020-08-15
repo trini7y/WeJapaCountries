@@ -61,8 +61,8 @@ export default {
     return {
       getCountry: [{ name: "Countires loading", states: [{}] }],
       getIndex: "",
-      selectedCountryIndex: "",
-      selectedStateIndex: "",
+      selectedCountryIndex: "0",
+      selectedStateIndex: "0",
       selectedCity: ""
     };
   },
