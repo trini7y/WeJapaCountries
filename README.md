@@ -1,4 +1,4 @@
-# wejapacountrie
+# wejapacountry
 
 ## Project setup
 ```
