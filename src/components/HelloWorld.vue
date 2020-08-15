@@ -1,136 +1,133 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br />
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener"
-        >vue-cli documentation</a
-      >.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel"
-          target="_blank"
-          rel="noopener"
-          >babel</a
+    <div class="countries">
+      <h3>WeJapa Countries</h3>
+      <br />
+      <label for="country">Choose a Country:</label>
+      <!-- <p>  {{get}} </p> -->
+      <select name="country" v-model="selectedCountryIndex">
+        <!-- <option value="" ></option> -->
+        <option
+          v-for="(country, index) in getCountry"
+          :key="index"
+          :value="index"
+          selected="Please select one"
         >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa"
-          target="_blank"
-          rel="noopener"
-          >pwa</a
+          {{ country.name }}</option
         >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router"
-          target="_blank"
-          rel="noopener"
-          >router</a
+      </select>
+      <label class="selected"> Selected: {{ selectedCountry }} </label>
+      <br />
+      <br />
+
+      <label for="country">Choose a State:</label>
+      <select name="state" v-model="selectedStateIndex">
+        <option disabled v-if="selectedCountryIndex"
+          >Please a {{ selectedCountry }} state</option
         >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex"
-          target="_blank"
-          rel="noopener"
-          >vuex</a
+        <option
+          v-for="(state, index) in selectedCountryStates"
+          :key="index"
+          :value="index"
+          >{{ state.name }}</option
         >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint"
-          target="_blank"
-          rel="noopener"
-          >eslint</a
+      </select>
+      <label class="selected"> Selected: {{ selectedState }}</label>
+      <br />
+      <br />
+
+      <label for="country">Choose a City:</label>
+      <select name="cities" v-model="selectedCity">
+        <option disabled v-if="selectedStateIndex"
+          >Please choose a {{ selectedState }} cities</option
         >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-unit-jest"
-          target="_blank"
-          rel="noopener"
-          >unit-jest</a
+        <option
+          v-for="(city, index) in selectedStateCities"
+          :key="index"
+          :value="city.name"
+          >{{ city.name }}</option
         >
-      </li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li>
-        <a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a>
-      </li>
-      <li>
-        <a href="https://forum.vuejs.org" target="_blank" rel="noopener"
-          >Forum</a
-        >
-      </li>
-      <li>
-        <a href="https://chat.vuejs.org" target="_blank" rel="noopener"
-          >Community Chat</a
-        >
-      </li>
-      <li>
-        <a href="https://twitter.com/vuejs" target="_blank" rel="noopener"
-          >Twitter</a
-        >
-      </li>
-      <li>
-        <a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a>
-      </li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li>
-        <a href="https://router.vuejs.org" target="_blank" rel="noopener"
-          >vue-router</a
-        >
-      </li>
-      <li>
-        <a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-devtools#vue-devtools"
-          target="_blank"
-          rel="noopener"
-          >vue-devtools</a
-        >
-      </li>
-      <li>
-        <a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener"
-          >vue-loader</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-          rel="noopener"
-          >awesome-vue</a
-        >
-      </li>
-    </ul>
+      </select>
+      <label class="selected"> Selected: {{ selectedCity }}</label>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "HelloWorld",
-  props: {
-    msg: String
+  data() {
+    return {
+      getCountry: [{ name: "Countires loading", states: [{}] }],
+      getIndex: "",
+      selectedCountryIndex: "",
+      selectedStateIndex: "",
+      selectedCity: ""
+    };
+  },
+  computed: {
+    selectedCountry() {
+      let index = parseInt(this.selectedCountryIndex);
+      return this.getCountry[index].name;
+    },
+    selectedCountryStates() {
+      let index = parseInt(this.selectedCountryIndex);
+      return this.getCountry[index].states;
+    },
+    selectedState() {
+      let index = parseInt(this.selectedStateIndex);
+      return this.selectedCountryStates[index].name;
+    },
+    selectedStateCities() {
+      let index = parseInt(this.selectedStateIndex);
+      return this.selectedCountryStates[index].cities;
+    }
+  },
+  // props: {
+  //     // getCountry:[]
+  // },
+  created() {
+    let url =
+      "https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json";
+
+    axios.get(url).then(res => {
+      this.getCountry = res.data;
+    });
   }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.hello {
+  margin-left: 0;
+  margin-right: 0;
+  // width: 50%;
+  padding: 5%;
+}
+.countries {
+  padding: 10% 5%;
+  background: rgb(60, 121, 190);
+  text-align: left;
+}
+.selected {
+  font-size: 1.2em;
+  margin-left: 8%;
+  text-align: right;
+}
+label {
+  font-size: 1.4em;
+}
+select {
+  border: 0;
+  height: 30px;
+}
 h3 {
   margin: 40px 0 0;
+  margin-bottom: 5%;
+  font-size: 2em;
+  text-align: center;
 }
 ul {
   list-style-type: none;
